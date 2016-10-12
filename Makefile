@@ -25,6 +25,7 @@ lint: ## Code linting
 	@${GOPATH}/bin/golint ./...
 
 deps: ## Download required dependencies
+	go get github.com/golang/groupcache
 	go get github.com/stretchr/testify/assert
 
 travis: deps vet test

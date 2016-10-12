@@ -54,7 +54,7 @@ func New(max int, ttl time.Duration) (cache.MeasurableCache, error) {
 	return lc, nil
 }
 
-// WithoutTTL returns LRU cache without
+// WithoutTTL returns LRU cache without TTL
 func WithoutTTL(max int) (cache.MeasurableCache, error) {
 	return New(max, time.Duration(0))
 }
