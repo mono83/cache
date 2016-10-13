@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+type custom string
+func (c custom) Error() string {return string(c)}
+
 func TestConstructor(t *testing.T) {
 	assert := assert.New(t)
 
@@ -31,6 +34,25 @@ func TestConstructor(t *testing.T) {
 	assert.Nil(c)
 	if assert.Error(err) {
 		assert.Equal("TTL should be zero or at least 10ms, but 1ms received", err.Error())
+	}
+}
+
+func TestInterfacesReceiver(t *testing.T) {
+	assert := assert.New(t)
+
+	c, err := WithoutTTL(2)
+	assert.NoError(err)
+	if assert.NotNil(c) {
+		data := custom("Hello, world")
+		assert.Error(data) // custom implements Error interface
+		assert.NoError(c.Put("key-1", data))
+
+		var receiver1 interface{}
+		assert.NoError(c.Get("key-1", &receiver1))
+
+		var receiver2 error
+		assert.NoError(c.Get("key-1", &receiver2))
+		assert.Equal("Hello, world", receiver2.Error())
 	}
 }
 

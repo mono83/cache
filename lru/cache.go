@@ -22,6 +22,10 @@ func (c cacheNode) into(target interface{}) error {
 		reflect.ValueOf(target).Elem().Set(reflect.ValueOf(c.value))
 		return nil
 	}
+	if c.valueType.AssignableTo(receivedType) {
+		reflect.ValueOf(target).Elem().Set(reflect.ValueOf(c.value))
+		return nil
+	}
 
 	return fmt.Errorf("Unable to write %s into %s", c.valueType.String(), receivedType.String())
 }
@@ -93,6 +97,7 @@ func (c *cacher) Put(key string, value interface{}) error {
 	if valueType.Kind() == reflect.Ptr {
 		// Copying from pointer
 		value = reflect.ValueOf(value).Elem().Interface()
+		valueType = valueType.Elem()
 	}
 
 	node := cacheNode{value: value, valueType: valueType}
